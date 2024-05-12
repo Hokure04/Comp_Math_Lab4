@@ -1,139 +1,8 @@
-module FileReader
-    implicit none
-    
-contains
-    subroutine file_input(file, x, y, n)
-        character(len=*), intent(in) :: file
-        real, allocatable, intent(out) :: x(:), y(:)
-        integer, intent(out) :: n
-        integer :: i
-        real :: a,b
-        open(unit=10, file = file, status='old', action='read')
-        n = 0
-        do
-            read(10, *, end=100) a, b
-            n = n+1
-        end do
-    100 continue
-        allocate(x(n), y(n))
-        rewind(10)
-        do i=1,n
-            read(10,*) x(i), y(i)
-        end do
-
-        close(10)
-    end subroutine file_input
-end module FileReader
-
-module KeyboardReader
-    implicit none
-
-contains
-    subroutine keyboard_input(x, y, n)
-        real, allocatable, intent(out) :: x(:), y(:)
-        integer, intent(out) :: n
-        integer :: i
-        print *, 'Enter array size:'
-        read(*,*) n
-
-        allocate(x(n))
-        allocate(y(n))
-
-        print *, 'Please input x values'
-        do i = 1,n
-            read(*,*) x(i)
-        end do
-
-        print *, 'Please input y values'
-        do i=1,n
-            read(*,*) y(i)
-        end do
-    end subroutine
-end module KeyboardReader
-
-
-
-
-module CorrelationCoefficient
-    implicit none
-
-contains
-    subroutine calc_correlation(x, y, n)
-        real, allocatable, intent(in) :: x(:), y(:)
-        integer, intent(in) :: n
-        real :: r, mean_x, mean_y, sum_x, sum_y, numerator
-        integer :: i
-        sum_x = 0
-        sum_y = 0
-        do i=1,n
-            sum_x = sum_x + x(i)
-            sum_y = sum_y + y(i)
-        end do
-        mean_x = sum_x/n
-        mean_y = sum_y/n
-        sum_x = 0
-        sum_y = 0
-        do i=1,n
-            sum_x = sum_x + (x(i)-mean_x)**2
-            sum_y = sum_y + (y(i)-mean_y)**2
-            numerator = numerator + (x(i) - mean_x)*(y(i) - mean_y)
-        end do
-        r = numerator/sqrt(sum_x*sum_y)
-        print *, 'Correlation coefficient: ', r
-    end subroutine
-end module CorrelationCoefficient
-
-module DeterminationCoefficient
-    implicit none
-    
-contains
-
-    subroutine calc_determination(y, fi, n)
-        real, allocatable, intent(in) :: y(:), fi(:)
-        integer, intent(in) :: n
-        real :: mean_fi, numerator, denominator, determination
-        integer :: i
-        mean_fi = 0
-        do i =1,n
-            mean_fi = mean_fi + fi(i)
-        end do
-        mean_fi = mean_fi/n
-        
-        numerator = 0
-        denominator = 0
-        do i=1,n
-            numerator = numerator + (y(i) - fi(i))**2
-            denominator = denominator + (y(i)-mean_fi)**2
-        end do
-        determination = 1 - numerator/denominator
-        print *,'Determination coefficient: ', determination
-    end subroutine
-end module DeterminationCoefficient
-
-module StandatrDeviation
-    implicit none
-    
-contains
-
-    subroutine calc_deviation(y, fi, n)
-        real, allocatable, intent(in) :: y(:), fi(:)
-        integer, intent(in) :: n
-        real :: sum, deviation
-        integer :: i
-        do i=1,n
-            sum = sum + (fi(i) - y(i))**2
-        end do
-        deviation = sqrt(sum/n)
-        print *, 'Standart deviation: ', deviation
-    end subroutine
-end module StandatrDeviation
 
 
 
 module LinearAproximation
-    use CorrelationCoefficient
-    use DeterminationCoefficient
-    use StandatrDeviation
+    use Parameters
     implicit none
     
 contains
@@ -331,8 +200,7 @@ end module Matrix4x4
 
 
 module QuadraticApproximation
-    use DeterminationCoefficient
-    use StandatrDeviation
+    use Parameters
     use Matrix3x3
     implicit none
     
@@ -392,8 +260,7 @@ contains
 end module
 
 module CubicApproximation
-    use DeterminationCoefficient
-    use StandatrDeviation
+    use Parameters
     use Matrix4x4
     implicit none
     
@@ -449,15 +316,16 @@ subroutine cubic_approximation(x, y, n)
 end subroutine cubic_approximation
 end module
 
-module ExponentialApproximation
-    implicit none
+! module ExponentialApproximation
+!     implicit none
     
-contains
+! contains
 
-    subroutine exp_approximation(x, y, n)
+!     subroutine exp_approximation(x, y, n)
         
-    end subroutine
-end module ExponentialApproximation
+!     end subroutine
+! end module ExponentialApproximation
+
 
 program main
     use FileReader
@@ -478,7 +346,7 @@ program main
         if (func_number > 2 .or. func_number < 1) then
             print *, 'Error: Uncorrect input, try again'
         else if ( func_number == 1 ) then
-            call file_input('test.txt', x, y, n)
+            call file_input('tests/present.txt', x, y, n)
             if (n < 8 .or. n > 12) then
                 print *, 'Points count incorrect shold to be from 8 till 12'
             else
@@ -487,7 +355,7 @@ program main
                 print *, "y:", y
                 print *, "n:", n 
             end if
-            ! call linear_approximation(x,y,n)
+            call linear_approximation(x,y,n)
             call quadratic_approximation(x,y,n)
             call cubic_approximation(x, y, n)
         else if (func_number == 2) then
