@@ -6,6 +6,7 @@ contains
         real, allocatable, intent(in) :: x(:), y(:)
         integer, intent(in) :: n
         real :: r, mean_x, mean_y, sum_x, sum_y, numerator
+        
         mean_x = sum(x)/n
         mean_y = sum(y)/n
         sum_x = sum((x-mean_x)**2)
