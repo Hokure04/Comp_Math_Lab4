@@ -1,87 +1,121 @@
-
 module Matrix4x4
     implicit none
-
+    
 contains
 
     subroutine solve_linear_system(matrix, rhs, solution)
-        real, intent(in) :: matrix(4,4), rhs(4)
+        real, intent(in) :: matrix(4,4)
+        real, intent(in) :: rhs(4)
         real, intent(out) :: solution(4)
-        real :: det
+        real :: local_matrix(4,4)  ! Declare local matrix variable
+        real :: local_rhs(4)       ! Declare local rhs variable
+        real :: pivot, factor
+        integer :: i, j, k
 
-        ! Находим определитель матрицы
-        det = determinant(matrix)
+        local_matrix = matrix  ! Copy input matrix to local variable
+        local_rhs = rhs        ! Copy input rhs to local variable
 
-        ! Проверка на невырожденность матрицы
-        if (det == 0.0) then
-            print *, 'ERROR: The matrix of the system is degenerate, the solution is impossible'
-            return
-        endif
-
-        ! Вычисление коэффициентов с помощью метода Крамера
-        solution(1) = determinant(get_minor(matrix, 1, 1)) / det
-        solution(2) = determinant(get_minor(matrix, 2, 1)) / det
-        solution(3) = determinant(get_minor(matrix, 3, 1)) / det
-        solution(4) = determinant(get_minor(matrix, 4, 1)) / det
-
-    end subroutine solve_linear_system
-
-    ! Функция для вычисления определителя матрицы
-    function determinant(matrix) result(det)
-        real, intent(in) :: matrix(4,4)
-        real :: det
-        real :: a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
-        
-        a = matrix(1,1)
-        b = matrix(1,2)
-        c = matrix(1,3)
-        d = matrix(1,4)
-        e = matrix(2,1)
-        f = matrix(2,2)
-        g = matrix(2,3)
-        h = matrix(2,4)
-        i = matrix(3,1)
-        j = matrix(3,2)
-        k = matrix(3,3)
-        l = matrix(3,4)
-        m = matrix(4,1)
-        n = matrix(4,2)
-        o = matrix(4,3)
-        p = matrix(4,4)
-        
-        det = a * (f * (k * p - l * o) - g * (j * p - l * n) + h * (j * o - k * n)) &
-            - b * (e * (k * p - l * o) - g * (i * p - l * m) + h * (i * o - k * m)) &
-            + c * (e * (j * p - l * n) - f * (i * p - l * m) + h * (i * n - j * m)) &
-            - d * (e * (j * o - k * n) - f * (i * o - k * m) + g * (i * n - j * m))
-            
-    end function determinant
-
-    ! Вспомогательная функция для получения минора матрицы
-    pure function get_minor(matrix, row, col) result(minor)
-        real, intent(in) :: matrix(4,4)
-        integer, intent(in) :: row, col
-        real :: minor(3,3)
-        integer :: i, j, m, n
-
-        m = 1
-        do i = 1, 4
-            if (i == row) then
-                cycle
-            endif
-            n = 1
-            do j = 1, 4
-                if (j == col) then
-                    cycle
-                endif
-                minor(m,n) = matrix(i,j)
-                n = n + 1
+        do k = 1, 4
+            pivot = local_matrix(k,k)
+            do j = k+1, 4
+                factor = local_matrix(j,k) / pivot
+                local_matrix(j,k:4) = local_matrix(j,k:4) - factor * local_matrix(k,k:4)
+                local_rhs(j) = local_rhs(j) - factor * local_rhs(k)
             end do
-            m = m + 1
         end do
 
-    end function get_minor
+        solution(4) = local_rhs(4) / local_matrix(4,4)
+        do i = 3, 1, -1
+            solution(i) = (local_rhs(i) - dot_product(local_matrix(i,i+1:4), solution(i+1:4))) / local_matrix(i,i)
+        end do
+    end subroutine solve_linear_system
 
 end module Matrix4x4
+
+
+! module Matrix4x4
+!     implicit none
+
+! contains
+
+!     subroutine solve_linear_system(matrix, rhs, solution)
+!         real, intent(in) :: matrix(4,4), rhs(4)
+!         real, intent(out) :: solution(4)
+!         real :: det
+
+!         ! Находим определитель матрицы
+!         det = determinant(matrix)
+
+!         ! Проверка на невырожденность матрицы
+!         if (abs(det) < 1e-10) then
+!             print *, 'ERROR: The matrix of the system is degenerate, the solution is impossible'
+!             return
+!         endif
+
+!         ! Вычисление коэффициентов с помощью метода Крамера
+!         solution(1) = determinant(get_minor(matrix, 1, 1)) / det
+!         solution(2) = -determinant(get_minor(matrix, 1, 2)) / det
+!         solution(3) = determinant(get_minor(matrix, 1, 3)) / det
+!         solution(4) = -determinant(get_minor(matrix, 1, 4)) / det
+
+!     end subroutine solve_linear_system
+
+!     ! Функция для вычисления определителя матрицы
+!     function determinant(matrix) result(det)
+!         real, intent(in) :: matrix(4,4)
+!         real :: det
+!         real :: a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
+        
+!         a = matrix(1,1)
+!         b = matrix(2,1)
+!         c = matrix(3,1)
+!         d = matrix(4,1)
+!         e = matrix(1,2)
+!         f = matrix(2,2)
+!         g = matrix(3,2)
+!         h = matrix(4,2)
+!         i = matrix(1,3)
+!         j = matrix(2,3)
+!         k = matrix(3,3)
+!         l = matrix(4,3)
+!         m = matrix(1,4)
+!         n = matrix(2,4)
+!         o = matrix(3,4)
+!         p = matrix(4,4)
+        
+!         det = a * (f * (k * p - l * o) - g * (j * p - l * n) + h * (j * o - k * n)) &
+!             - e * (b * (k * p - l * o) - c * (j * p - l * n) + d * (j * o - k * n)) &
+!             + i * (b * (g * p - h * o) - c * (f * p - h * m) + d * (f * o - g * m)) &
+!             - m * (b * (g * l - h * k) - c * (f * l - h * i) + d * (f * k - g * i))
+            
+!     end function determinant
+
+!     ! Вспомогательная функция для получения минора матрицы
+!     pure function get_minor(matrix, row, col) result(minor)
+!         real, intent(in) :: matrix(4,4)
+!         integer, intent(in) :: row, col
+!         real :: minor(3,3)
+!         integer :: i, j, m, n
+
+!         m = 1
+!         do i = 1, 4
+!             if (i == row) then
+!                 cycle
+!             endif
+!             n = 1
+!             do j = 1, 4
+!                 if (j == col) then
+!                     cycle
+!                 endif
+!                 minor(m,n) = matrix(i,j)
+!                 n = n + 1
+!             end do
+!             m = m + 1
+!         end do
+
+!     end function get_minor
+
+! end module Matrix4x4
 
 module CubicApproximation
     use Parameters
@@ -90,54 +124,59 @@ module CubicApproximation
     
 contains
     
-subroutine cubic_approximation(x, y, n)
-    real, allocatable, intent(in) :: x(:), y(:)
-    integer, intent(in) :: n
-    real :: sx = 0, sx_2 = 0, sx_3 = 0, sx_4 = 0, sy = 0, sxy = 0, sx_2y = 0, sx_4y = 0, m
-    real :: matrix(4,4)
-    real :: rhs(4)
-    real, allocatable :: a(:), P_x(:), e_i(:)
-    integer :: i
+    subroutine cubic_approximation(x, y, n)
+        real, allocatable, intent(in) :: x(:), y(:)
+        integer, intent(in) :: n
+        real :: sx = 0, sx_2 = 0, sx_3 = 0, sx_4 = 0, sx_5 = 0, sx_6 = 0, sy = 0, sxy = 0, sx_2y = 0, sx_3y = 0, m
+        real :: matrix(4,4)
+        real :: rhs(4)
+        real, allocatable :: a(:), P_x(:), e_i(:)
+        integer :: i
 
-    m = n 
+        print *, "Cubic Approximation"
 
-    do i=1,n
-        sx = sx + x(i)
-        sx_2 = sx_2 + x(i)**2
-        sx_3 = sx_3 + x(i)**3
-        sx_4 = sx_4 + x(i)**4
-        sy = sy + y(i)
-        sxy = sxy + x(i)*y(i)
-        sx_2y = sx_2y + x(i)**2*y(i)
-        sx_4y = sx_4y + x(i)**4*y(i)
-    end do
+        m = n 
+        sx = sum(x)
+        sx_2 = sum(x**2)
+        sx_3 = sum(x**3)
+        sx_4 = sum(x**4)
+        sx_5 = sum(x**5)
+        sx_6 = sum(x**6)
+        sy = sum(y)
+        sxy = sum(x*y)
+        sx_2y = sum(x**2 * y)
+        sx_3y = sum(x**3 * y)
 
-    matrix = reshape([m, sx, sx_2, sx_3, &
-                      sx, sx_2, sx_3, sx_4, &
-                      sx_2, sx_3, sx_4, sx_4*sx_4, &
-                      sx_3, sx_4, sx_4*sx_4, sx_4**2], [4, 4])
+        matrix = reshape([m, sx, sx_2, sx_3, &
+                          sx, sx_2, sx_3, sx_4, &
+                          sx_2, sx_3, sx_4, sx_5, &
+                          sx_3, sx_4, sx_5, sx_6], [4, 4])
 
-    rhs = [sy, sxy, sx_2y, sx_4y]
+        rhs = [sy, sxy, sx_2y, sx_3y]
 
-    allocate(a(4))
-    call solve_linear_system(matrix, rhs, a)
+        allocate(a(4))
+        call solve_linear_system(matrix, rhs, a)
 
-    allocate(P_x(n), e_i(n))
+        print *, "Coefficients a: ", a
 
-    do i=1,n
-        P_x(i) = a(1) + a(2)*x(i) + a(3)*x(i)**2 + a(4)*x(i)**3
-        e_i(i) = P_x(i) - y(i)
-    end do
+        allocate(P_x(n), e_i(n))
 
-    print *, 'X values: ', x
-    print *, 'Y values: ', y
-    print *, 'P_x values: ', P_x
-    print *, 'e_i values: ', e_i
+        do i=1,n
+            P_x(i) = a(1) + a(2)*x(i) + a(3)*x(i)**2 + a(4)*x(i)**3
+            e_i(i) = P_x(i) - y(i)
+        end do
 
-    call calc_determination(x, y, n)
-    call calc_deviation(x, y, n)
+        print *, 'X values: ', x
+        print *, 'Y values: ', y
+        print *, 'P_x values: ', P_x
+        print *, 'e_i values: ', e_i
 
-end subroutine cubic_approximation
+        call calc_determination(y, P_x, n)
+        call calc_deviation(y, P_x, n)
+
+        print *, ""
+
+    end subroutine cubic_approximation
 end module
 
 ! module ExponentialApproximation
@@ -170,7 +209,7 @@ program main
         if (func_number > 2 .or. func_number < 1) then
             print *, 'Error: Uncorrect input, try again'
         else if ( func_number == 1 ) then
-            call file_input('tests/present2.txt', x, y, n)
+            call file_input('tests/present.txt', x, y, n)
             if (n < 8 .or. n > 12) then
                 print *, 'Points count incorrect shold to be from 8 till 12'
             else
@@ -179,8 +218,8 @@ program main
                 print *, "y:", y
                 print *, "n:", n 
             end if
-            call linear_approximation(x,y,n)
-            call quadratic_approximation(x,y,n)
+            call linear_aproximation(x,y,n)
+            call quadratic_aproximation(x,y,n)
             call cubic_approximation(x, y, n)
         else if (func_number == 2) then
             call keyboard_input(x, y, n)

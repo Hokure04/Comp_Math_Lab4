@@ -3,12 +3,15 @@ module LinearAproximation
     implicit none
     
 contains
-    subroutine linear_approximation(x,y,n)
+    subroutine linear_aproximation(x,y,n)
         real, allocatable, intent(in) :: x(:), y(:)
         integer, intent(in) :: n
         real :: sx, sxx, sy, sxy, delta, delta1, delta2, a, b
         real, allocatable :: P_x(:), e_i(:)
         integer :: i
+
+        print *, "Linear Aproximation"
+
         sx = sum(x)
         sxx = sum(x**2)
         sy = sum(y)
@@ -30,6 +33,8 @@ contains
                 P_x(i) = a*x(i)+b
                 e_i(i) = P_x(i) - y(i)
             end do
+            print *, 'X values:', x
+            print *, 'Y values: ', y
             print *, 'P_x:',P_x
             print *,'e_i:', e_i
             call calc_correlation(x,y,n)
@@ -38,5 +43,7 @@ contains
         else
             print *, 'ERROR: Delta parameter is 0, but we cannnot divide by zero'
         end if
+
+        print *, ""
     end subroutine
 end module LinearAproximation
