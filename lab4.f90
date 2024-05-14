@@ -1,6 +1,4 @@
 
-
-
 program main
     use FileReader
     use KeyboardReader
@@ -9,6 +7,7 @@ program main
     use CubicApproximation
     use ExponentialApproximation
     use PowerApproximation
+    use LogarithmicApproximation
     implicit none
     real, allocatable :: x(:), y(:)
     integer :: n
@@ -22,7 +21,7 @@ program main
         if (func_number > 2 .or. func_number < 1) then
             print *, 'ERROR: Uncorrect input, try again'
         else if ( func_number == 1 ) then
-            call file_input('tests/present3.txt', x, y, n)
+            call file_input('tests/present2.txt', x, y, n)
             if (n < 8 .or. n > 12) then
                 print *, 'Points count incorrect shold to be from 8 till 12'
             else
@@ -37,6 +36,7 @@ program main
             call cubic_approximation(x, y, n)
             call exp_approximation(x, y, n)
             call power_approximation(x, y, n)
+            call logarithmic_approximation(x, y, n)
         else if (func_number == 2) then
             call keyboard_input(x, y, n)
             print *, "x values:", x
