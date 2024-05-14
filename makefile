@@ -12,14 +12,17 @@ FILE = file_reader
 
 all: lab4 clean
 
-lab4: lab4.f90 $(FILE).o $(KEY).o $(PARAM).o $(LINE).o $(QUADR).o $(CUBE).o $(EXP).o $(POW).o $(LOG).o solve_system.o
-	$(FC) lab4.f90 -o lab4 $(FILE).o $(KEY).o $(PARAM).o $(LINE).o $(QUADR).o $(CUBE).o $(EXP).o $(POW).o $(LOG).o solve_system.o
+lab4: lab4.f90 $(FILE).o $(KEY).o $(PARAM).o $(LINE).o $(QUADR).o $(CUBE).o $(EXP).o $(POW).o $(LOG).o solve_system.o display_graphics.o
+	$(FC) lab4.f90 -o lab4 $(FILE).o $(KEY).o $(PARAM).o $(LINE).o $(QUADR).o $(CUBE).o $(EXP).o $(POW).o $(LOG).o solve_system.o display_graphics.o
 
 file_reader.o: $(DIR)/$(FILE).f90
 	$(FC) -c $(DIR)/$(FILE).f90
 
 keyboard_reader.o: $(DIR)/$(KEY).f90
 	$(FC) -c $(DIR)/$(KEY).f90
+
+display_graphics.o: $(DIR)/display_graphics.f90
+	$(FC) -c $(DIR)/display_graphics.f90
 
 parameters.o: $(DIR)/$(PARAM).f90
 	$(FC) -c $(DIR)/$(PARAM).f90

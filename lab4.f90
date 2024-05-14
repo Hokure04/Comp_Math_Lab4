@@ -13,6 +13,7 @@ program main
     integer :: func_number
     integer :: i
     logical :: valid_input
+    character(len=100) :: file
 
     do
         valid_input = .false.
@@ -50,7 +51,7 @@ program main
             print *, ""
             call linear_approximation(x, y, n)
             call quadratic_approximation(x, y, n)
-            call cubic_approximation(x, y, n)
+            call cubic_approximation(x, y, n, file)
             call exp_approximation(x, y, n)
             call power_approximation(x, y, n)
             call logarithmic_approximation(x, y, n)

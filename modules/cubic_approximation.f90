@@ -33,13 +33,14 @@ contains
 end module Matrix4x4
 
 module CubicApproximation
+    use DrawGraphics
     use Parameters
     use Matrix4x4
     implicit none
     
 contains
     
-    subroutine cubic_approximation(x, y, n)
+    subroutine cubic_approximation(x, y, n, file)
         real, allocatable, intent(in) :: x(:), y(:)
         integer, intent(in) :: n
         real :: sx = 0, sx_2 = 0, sx_3 = 0, sx_4 = 0, sx_5 = 0, sx_6 = 0, sy = 0, sxy = 0, sx_2y = 0, sx_3y = 0, m
@@ -47,8 +48,11 @@ contains
         real :: rhs(4)
         real, allocatable :: a(:), P_x(:), e_i(:)
         integer :: i
+        character(len=100) :: file
 
         print *, "Cubic Approximation"
+
+        call draw(file)
 
         m = n 
         sx = sum(x)
