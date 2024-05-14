@@ -16,6 +16,15 @@ contains
         print *, 'Correlation coefficient: ', r
     end subroutine
 
+    subroutine calc_deviation_measure(e_i)
+        real, allocatable, intent(in) :: e_i(:)
+        real :: s
+
+        s = sum(e_i**2)
+        print *, 'Deviation measure: ', s
+
+    end subroutine
+
     subroutine calc_determination(y, fi, n)
         real, allocatable, intent(in) :: y(:), fi(:)
         integer, intent(in) :: n

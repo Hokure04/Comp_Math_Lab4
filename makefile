@@ -1,38 +1,49 @@
 FC = gfortran
 DIR = modules
-
+LOG = logarithmic_approximation
+POW = power_approximation
+EXP = exponential_approximation
+CUBE = cubic_approximation
+QUADR = quadratic_approximation
+LINE = linear_approximation
+PARAM = parameters
+KEY = keyboard_reader
+FILE = file_reader
 
 all: lab4 clean
 
-lab4: lab4.f90 file_reader.o keyboard_reader.o parameters.o linear_aproximation.o quadratic_aproximation.o cubic_aproximation.o exponential_approximation.o power_approximation.o logarithmic_approximation.o
-	$(FC) lab4.f90 -o lab4 file_reader.o keyboard_reader.o parameters.o linear_aproximation.o quadratic_aproximation.o cubic_aproximation.o exponential_approximation.o power_approximation.o logarithmic_approximation.o
+lab4: lab4.f90 $(FILE).o $(KEY).o $(PARAM).o $(LINE).o $(QUADR).o $(CUBE).o $(EXP).o $(POW).o $(LOG).o solve_system.o
+	$(FC) lab4.f90 -o lab4 $(FILE).o $(KEY).o $(PARAM).o $(LINE).o $(QUADR).o $(CUBE).o $(EXP).o $(POW).o $(LOG).o solve_system.o
 
-file_reader.o: $(DIR)/file_reader.f90
-	$(FC) -c $(DIR)/file_reader.f90
+file_reader.o: $(DIR)/$(FILE).f90
+	$(FC) -c $(DIR)/$(FILE).f90
 
-keyboard_reader.o: $(DIR)/keyboard_reader.f90
-	$(FC) -c $(DIR)/keyboard_reader.f90
+keyboard_reader.o: $(DIR)/$(KEY).f90
+	$(FC) -c $(DIR)/$(KEY).f90
 
-parameters.o: $(DIR)/parameters.f90
-	$(FC) -c $(DIR)/parameters.f90
+parameters.o: $(DIR)/$(PARAM).f90
+	$(FC) -c $(DIR)/$(PARAM).f90
 
-linear_aproximation.o: $(DIR)/linear_aproximation.f90
-	$(FC) -c $(DIR)/linear_aproximation.f90
+linear_approximation.o: $(DIR)/$(LINE).f90
+	$(FC) -c $(DIR)/$(LINE).f90
 
-quadratic_aproximation.o: $(DIR)/quadratic_aproximation.f90
-	$(FC) -c $(DIR)/quadratic_aproximation.f90
+quadratic_approximation.o: $(DIR)/$(QUADR).f90
+	$(FC) -c $(DIR)/$(QUADR).f90
 
-cubic_aproximation.o: $(DIR)/cubic_aproximation.f90
-	$(FC) -c $(DIR)/cubic_aproximation.f90
+cubic_approximation.o: $(DIR)/$(CUBE).f90
+	$(FC) -c $(DIR)/$(CUBE).f90
 
-exponential_approximation.o: $(DIR)/exponential_approximation.f90
-	$(FC) -c $(DIR)/exponential_approximation.f90
+solve_system.o: $(DIR)/solve_system.f90
+	$(FC) -c $(DIR)/solve_system.f90
 
-power_approximation.o: $(DIR)/power_approximation.f90
-	$(FC) -c $(DIR)/power_approximation.f90
+exponential_approximation.o: $(DIR)/$(EXP).f90
+	$(FC) -c $(DIR)/$(EXP).f90 
 
-logarithmic_approximation.o: $(DIR)/logarithmic_approximation.f90
-	$(FC) -c $(DIR)/logarithmic_approximation.f90
+power_approximation.o: $(DIR)/$(POW).f90
+	$(FC) -c $(DIR)/$(POW).f90
+
+logarithmic_approximation.o: $(DIR)/$(LOG).f90
+	$(FC) -c $(DIR)/$(LOG).f90
 
 clean:
 	del *.o *.mod

@@ -86,6 +86,7 @@ contains
         print *, 'P_x values: ', P_x
         print *, 'e_i values: ', e_i
 
+        call calc_deviation_measure(e_i)
         call calc_determination(y, P_x, n)
         call calc_deviation(y, P_x, n)
 

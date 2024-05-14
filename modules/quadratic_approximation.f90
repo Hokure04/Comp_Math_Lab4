@@ -67,7 +67,7 @@ module QuadraticApproximation
     
 contains
     
-    subroutine quadratic_aproximation(x, y, n)
+    subroutine quadratic_approximation(x, y, n)
         real, allocatable, intent(in) :: x(:), y(:)
         integer, intent(in) :: n
         real :: m, sx = 0, sx_2 = 0, sx_3 = 0, sx_4 = 0, sy = 0, sxy = 0, sx_2y = 0
@@ -76,7 +76,7 @@ contains
         real, allocatable :: a(:), P_x(:), e_i(:)
         integer :: i
 
-        print *, "Quadratic aproximation"
+        print *, "Quadratic approximation"
     
         m = n
         sx = sum(x)
@@ -109,6 +109,7 @@ contains
         print *, 'Y values: ', y
         print *, 'P_x values:', P_x
         print *, 'e_i values:', e_i
+        call calc_deviation_measure(e_i)
         call calc_determination(y, P_x, n)
         call calc_deviation(y, P_x, n)
 

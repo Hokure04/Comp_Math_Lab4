@@ -2,13 +2,23 @@ module FileReader
     implicit none
     
 contains
-    subroutine file_input(file, x, y, n)
-        character(len=*), intent(in) :: file
+    subroutine file_input(x, y, n)
+        ! character(len=*), intent(in) :: file
         real, allocatable, intent(out) :: x(:), y(:)
         integer, intent(out) :: n
-        integer :: i
+        character(len=100) :: file_name
+        integer :: i, file_found
         real :: a,b
-        open(unit=10, file = file, status='old', action='read')
+
+        print *, "Enter path to file: "
+        read(*, '(A)') file_name
+        open(unit=10, file = file_name, status='old', action='read', iostat=file_found)
+
+        if (file_found /= 0) then
+            print *, "File not found"
+            return
+        end if
+
         n = 0
         do
             read(10, *, end=100) a, b

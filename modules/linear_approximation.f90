@@ -1,16 +1,16 @@
-module LinearAproximation
+module LinearApproximation
     use Parameters
     implicit none
     
 contains
-    subroutine linear_aproximation(x,y,n)
+    subroutine linear_approximation(x,y,n)
         real, allocatable, intent(in) :: x(:), y(:)
         integer, intent(in) :: n
         real :: sx, sxx, sy, sxy, delta, delta1, delta2, a, b
         real, allocatable :: P_x(:), e_i(:)
         integer :: i
 
-        print *, "Linear Aproximation"
+        print *, "Linear Approximation"
 
         sx = sum(x)
         sxx = sum(x**2)
@@ -37,6 +37,7 @@ contains
             print *, 'Y values: ', y
             print *, 'P_x:',P_x
             print *,'e_i:', e_i
+            call calc_deviation_measure(e_i)
             call calc_correlation(x,y,n)
             call calc_determination(y, P_x, n)
             call calc_deviation(y,P_x,n)
@@ -46,4 +47,4 @@ contains
 
         print *, ""
     end subroutine
-end module LinearAproximation
+end module LinearApproximation
